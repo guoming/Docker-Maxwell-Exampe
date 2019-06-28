@@ -1,0 +1,29 @@
+version: '3.3'
+networks:
+  microservice:
+    external:
+      name: microservice
+configs:
+  config_properties:
+    file: ./etc/config.properties
+
+services: 
+  connection2rabbitmq:
+    image: zendesk/maxwell
+    restart: always
+    networks:      
+      - microservice
+    deploy:
+      replicas: 1  
+      restart_policy:
+        condition: any        
+      resources:
+        limits:
+          cpus: "0.4"
+          memory: 500M    
+    configs:
+      - source: config_properties
+        target: /etc/maxwell/config.properties
+    command: ./bin/maxwell --config=/etc/maxwell/config.properties
+
+
